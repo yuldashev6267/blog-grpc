@@ -12,12 +12,11 @@ import (
 	"github.com/yuldashev6267/blog-grpc/db"
 	"github.com/yuldashev6267/blog-grpc/models"
 	"google.golang.org/grpc"
-	// "gopkg.in/oauth2.v3/models"
 )
 
 type server struct {
 }
-  
+
 func (*server) CreateBlog(ctx context.Context, req *blogpb.BlogRequest) (*blogpb.BlogResponse, error) {
 	blog := req.GetBlog()
 
@@ -27,14 +26,17 @@ func (*server) CreateBlog(ctx context.Context, req *blogpb.BlogRequest) (*blogpb
 		Title:    blog.GetTitle(),
 		Comment:  blog.GetComment(),
 	}
-
-	return &blogpb.BlogResponse{Blog: data}, nil
+	_ = data
+	return *blogpb.BlogResponse{
+		Blog: data,
+	}, nil
+	return nil, nil
 }
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	lis, err := net.Listen("tcp", "0.0.0.0:50051")
-	db.DatabaseConn()
+	db.DatabaseConn("grpcBlog")
 	if err != nil {
 		log.Fatalf("There is an error listening server %v", err)
 	}
