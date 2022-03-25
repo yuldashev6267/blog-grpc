@@ -1,2 +1,2 @@
 .env
-./blogpb/*.pb.go
+blogpb/*.pb.go
