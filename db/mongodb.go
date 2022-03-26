@@ -3,10 +3,8 @@ package db
 import (
 	"context"
 	"fmt"
-	"os"
 	"time"
 
-	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -14,7 +12,7 @@ import (
 )
 
 const (
-	blogs = "blogs"
+	Blogs = "blogs"
 )
 
 type Database interface {
@@ -33,7 +31,7 @@ func (db *mongoDatabase) Disconnect() error {
 }
 
 func (db *mongoDatabase) BlogCollection() *mongo.Collection {
-	return db.collection(blogs)
+	return db.collection(Blogs)
 }
 
 func (db *mongoDatabase) collection(name string) *mongo.Collection {
@@ -57,15 +55,12 @@ func (db *mongoDatabase) collection(name string) *mongo.Collection {
 	return col
 }
 
-func DatabaseConn(databaseName string) Database {
-
-	err := godotenv.Load()
+func DatabaseConn(connectiotStr string, databaseName string) Database {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv("DATABASE_CONNECTION")))
 
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(connectiotStr))
 	if err != nil {
 		return nil
 	}
@@ -77,7 +72,6 @@ func DatabaseConn(databaseName string) Database {
 
 	database := client.Database(databaseName)
 	fmt.Println("Database connected")
-
 	return &mongoDatabase{
 		database:     database,
 		client:       client,
