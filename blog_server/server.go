@@ -23,7 +23,9 @@ const (
 	dataBaseName          = "DATABASE_NAME"
 )
 
-type server struct {}
+type server struct {
+	blogpb.UnimplementedBlogServiceServer
+}
 
 type blogService struct {
 	db db.Database
@@ -34,18 +36,17 @@ type blogInter interface {
 }
 
 func (b *blogService) InsertBlog(blog *models.Blog) (*primitive.ObjectID, error) {
-
 	blogCollection := b.db.BlogCollection()
 
 	res, err := blogCollection.InsertOne(context.Background(), &blog)
-
 	if err != nil {
-		return &primitive.NilObjectID, nil
+		return &primitive.NilObjectID, fmt.Errorf("Error %v", err)
 	}
 	oid, ok := res.InsertedID.(primitive.ObjectID)
 	if !ok {
-		return &primitive.NilObjectID, nil
+		return &primitive.NilObjectID, fmt.Errorf("123 %v", err)
 	}
+
 	return &oid, nil
 
 }
@@ -53,15 +54,16 @@ func (b *blogService) InsertBlog(blog *models.Blog) (*primitive.ObjectID, error)
 func (*server) CreateBlog(ctx context.Context, req *blogpb.BlogRequest) (*blogpb.BlogResponse, error) {
 	blog := req.GetBlog()
 
-	data := models.Blog{
+	data := &models.Blog{
 		AuthorId: blog.GetAuthorId(),
 		Title:    blog.GetTitle(),
 		Comment:  blog.GetComment(),
 	}
+
 	var s blogInter
 	s = &blogService{}
 
-	id, err := s.InsertBlog(&data)
+	id, err := s.InsertBlog(data)
 
 	if err != nil {
 		return nil, status.Errorf(

@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	Blogs = "blogs"
+	blogs = "Blogs"
 )
 
 type Database interface {
@@ -31,7 +31,7 @@ func (db *mongoDatabase) Disconnect() error {
 }
 
 func (db *mongoDatabase) BlogCollection() *mongo.Collection {
-	return db.collection(Blogs)
+	return db.collection(blogs)
 }
 
 func (db *mongoDatabase) collection(name string) *mongo.Collection {

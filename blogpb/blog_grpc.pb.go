@@ -47,7 +47,7 @@ func (c *blogServiceClient) CreateBlog(ctx context.Context, in *BlogRequest, opt
 // for forward compatibility
 type BlogServiceServer interface {
 	CreateBlog(context.Context, *BlogRequest) (*BlogResponse, error)
-	// mustEmbedUnimplementedBlogServiceServer()
+	mustEmbedUnimplementedBlogServiceServer()
 }
 
 // UnimplementedBlogServiceServer must be embedded to have forward compatible implementations.
@@ -57,14 +57,14 @@ type UnimplementedBlogServiceServer struct {
 func (UnimplementedBlogServiceServer) CreateBlog(context.Context, *BlogRequest) (*BlogResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBlog not implemented")
 }
-// func (UnimplementedBlogServiceServer) mustEmbedUnimplementedBlogServiceServer() {}
+func (UnimplementedBlogServiceServer) mustEmbedUnimplementedBlogServiceServer() {}
 
 // UnsafeBlogServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to BlogServiceServer will
 // result in compilation errors.
-// type UnsafeBlogServiceServer interface {
-// 	mustEmbedUnimplementedBlogServiceServer()
-// }
+type UnsafeBlogServiceServer interface {
+	mustEmbedUnimplementedBlogServiceServer()
+}
 
 func RegisterBlogServiceServer(s grpc.ServiceRegistrar, srv BlogServiceServer) {
 	s.RegisterService(&BlogService_ServiceDesc, srv)
