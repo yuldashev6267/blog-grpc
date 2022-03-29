@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package blogpb;
 
-option go_package = "./blogpb";
+option go_package = "./pkg/internals/blogpb";
 
 message Blog {
     string id = 1;

@@ -1,4 +1,4 @@
-package db
+package repository
 
 import (
 	"context"
@@ -45,7 +45,6 @@ func (db *mongoDatabase) collection(name string) *mongo.Collection {
 		if v == name {
 			col := db.database.Collection(name)
 			db._collections[name] = col
-			return col
 		}
 	}
 

@@ -3,12 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/yuldashev6267/blog-grpc/internals/blogpb"
 	"log"
 	"os"
 	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/yuldashev6267/blog-grpc/blogpb"
 	"google.golang.org/grpc"
 )
 
