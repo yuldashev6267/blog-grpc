@@ -4,19 +4,14 @@ import (
 	"context"
 	"fmt"
 	"github.com/yuldashev6267/blog-grpc/internals/blogpb"
-	"log"
-	"os"
 	"time"
-
-	"github.com/joho/godotenv"
-	"google.golang.org/grpc"
 )
 
 const (
 	severAddress = "SERVER_ADDR"
 )
 
-func main() {
+/*func main() {
 
 	fmt.Println("Client blog is called")
 
@@ -39,7 +34,7 @@ func main() {
 	rpcC := blogpb.NewBlogServiceClient(cc)
 	CreatBlogClient(rpcC)
 }
-
+*/
 func CreatBlogClient(b blogpb.BlogServiceClient) (string, error) {
 	req := &blogpb.BlogRequest{
 		Blog: &blogpb.Blog{

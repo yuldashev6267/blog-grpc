@@ -3,20 +3,21 @@ package blog_server
 import (
 	"context"
 	"github.com/yuldashev6267/blog-grpc/internals/blogpb"
-	"github.com/yuldashev6267/blog-grpc/pkg/models"
 	"github.com/yuldashev6267/blog-grpc/pkg/api/controllers"
+	"github.com/yuldashev6267/blog-grpc/pkg/models"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-type server struct{
-	blogpb.UnimplementedBlogServiceServer
+type BlogController struct {
 	blog controllers.BlogService
 }
 
-type
+type BlogService interface {
+	CreateBlog(ctx context.Context,req *blogpb.BlogResponse) (*blogpb.BlogResponse, error)
+}
 
-func (s *server) CreateBlog(ctx context.Context, req *blogpb.BlogRequest) (*blogpb.BlogResponse, error){
+func (s *BlogController) CreateBlog(ctx context.Context, req *blogpb.BlogRequest) (*blogpb.BlogResponse, error){
 	blog := req.GetBlog()
 
 	data := models.Blog{
@@ -24,7 +25,8 @@ func (s *server) CreateBlog(ctx context.Context, req *blogpb.BlogRequest) (*blog
 		Title: blog.GetTitle(),
 		Comment: blog.GetComment(),
 	}
-	res, err := s.blog.InsertBlog(data)
+
+	res, err := s.blog.InsertBlog(&data)
 
 	if err != nil {
 		return nil, status.Errorf(
@@ -42,5 +44,7 @@ func (s *server) CreateBlog(ctx context.Context, req *blogpb.BlogRequest) (*blog
 		},
 	}, nil
 }
-
-
+//
+//func New(blog controllers.BlogService)BlogService {
+//	return &server{blog: blog}
+//}

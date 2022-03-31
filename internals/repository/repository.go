@@ -54,19 +54,19 @@ func (db *mongoDatabase) collection(name string) *mongo.Collection {
 	return col
 }
 
-func DatabaseConn(connectiotStr string, databaseName string) Database {
+func DatabaseConn(connectiotStr string, databaseName string) *mongoDatabase {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(connectiotStr))
 	if err != nil {
-		return nil
+		//return nil
 	}
 
 	err = client.Ping(ctx, readpref.Primary())
 	if err != nil {
-		return nil
+		//return nil
 	}
 
 	database := client.Database(databaseName)

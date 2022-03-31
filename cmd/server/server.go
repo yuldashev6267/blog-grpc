@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/yuldashev6267/blog-grpc/internals/blogpb"
 	"github.com/yuldashev6267/blog-grpc/internals/repository"
 	"github.com/yuldashev6267/blog-grpc/pkg/api"
 	"github.com/yuldashev6267/blog-grpc/pkg/blog_server"
@@ -40,7 +41,12 @@ func startServer(ch chan int){
 	ch <- 0
 }
 
-func startGrpcServer(blogService blog_server. ,ch chan int){
+type rpcServer struct {
+	blogpb.UnimplementedBlogServiceServer
+	blo blog_server.BlogService
+}
+
+func startGrpcServer(ch chan int){
 	l, err := net.Listen("tcp", os.Getenv(grpcServerAddr))
 
 	if err != nil {
@@ -51,17 +57,24 @@ func startGrpcServer(blogService blog_server. ,ch chan int){
 
 	s := grpc.NewServer(opts...)
 
+	if err := s.Serve(l); err != nil {
+		log.Fatalf("Error has been occured during rpc serve %v", err)
+	}
+	blogpb.RegisterBlogServiceServer(s, &rpcServer{})
+	fmt.Println("Grpc Started")
 	ch<-0
 }
 
 func main() {
 
 	ginCh :=make(chan int)
+	rpcCh := make(chan int,1)
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	listeningMong := createDb()
 	go startServer(ginCh)
 	defer listeningMong.Disconnect()
-
+	go startGrpcServer(rpcCh)
 	<-ginCh
+	<-rpcCh
 }
